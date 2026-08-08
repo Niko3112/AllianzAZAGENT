@@ -26,7 +26,19 @@
   <meta name="twitter:description" content="Vaši pouzdani partneri za osiguranje." />
   <meta name="twitter:image" content="slike/logo.webp" />
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- Preconnect to external domains to speed up connection -->
+  <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
+
+  <!-- Preload critical assets like fonts -->
+  <!-- NOTE: Replace with actual font paths if they are different -->
+  <link rel="preload" href="/fonts/AllianzNeoWeb-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/AllianzNeoWeb-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Asynchronously load the main stylesheet with high priority -->
+  <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="style.css">
+  </noscript>
 </head>
 
 <body>
@@ -92,11 +104,12 @@
       <!-- Mini avatari vidljivi samo na mobitelu -->
       <div class="hero-mobile-avatars">
         <a href="#card-marijana" class="h-avatar-wrapper">
-          <div class="h-avatar-mini"><img src="slike/marijanarb.webp" alt="Marijana Mrkonjić"></div>
+          <div class="h-avatar-mini"><img src="slike/marijanarb.webp" alt="Marijana Mrkonjić" fetchpriority="high">
+          </div>
           <div class="hero-person-label"><strong>Marijana Mrkonjić</strong></div>
         </a>
         <a href="#card-danijel" class="h-avatar-wrapper">
-          <div class="h-avatar-mini"><img src="slike/danijelrb.webp" alt="Danijel Mrkonjić"></div>
+          <div class="h-avatar-mini"><img src="slike/danijelrb.webp" alt="Danijel Mrkonjić" fetchpriority="high"></div>
           <div class="hero-person-label"><strong>Danijel Mrkonjić</strong></div>
         </a>
       </div>

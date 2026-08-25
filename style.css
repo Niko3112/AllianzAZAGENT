@@ -750,6 +750,7 @@ a {
   display: flex;
   width: max-content;
   animation: marquee 40s linear infinite;
+  will-change: transform;
 }
 
 @keyframes marquee {
@@ -2681,6 +2682,12 @@ h3.agent-name-row {
   font-size: 32px;
   font-weight: bold;
   cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  line-height: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .text-modal-close:hover,

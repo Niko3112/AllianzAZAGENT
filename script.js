@@ -202,16 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (closeBtn) {
+      const handleCloseButton = (e) => {
+        stopLightboxEvent(e);
+        closeLightbox();
+      };
+
       closeBtn.addEventListener('pointerdown', stopLightboxEvent);
-      closeBtn.addEventListener('touchend', stopLightboxEvent);
-      closeBtn.addEventListener('click', (e) => {
-        stopLightboxEvent(e);
-        closeLightbox();
-      });
-      closeBtn.addEventListener('pointerup', (e) => {
-        stopLightboxEvent(e);
-        closeLightbox();
-      });
+      closeBtn.addEventListener('touchstart', stopLightboxEvent, { passive: false });
+      closeBtn.addEventListener('touchend', handleCloseButton, { passive: false });
+      closeBtn.addEventListener('pointerup', handleCloseButton);
+      closeBtn.addEventListener('click', handleCloseButton);
     }
 
     if (lightboxBackdrop) {
@@ -336,9 +336,23 @@ document.addEventListener('DOMContentLoaded', () => {
       modalTextContent.innerHTML = '';
     };
 
+    const handleCloseModal = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      closeModal();
+    };
+
     if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(privacyContent); });
     if (openImpressumBtn) openImpressumBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(impressumContent); });
-    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('pointerdown', handleCloseModal);
+      closeModalBtn.addEventListener('touchstart', handleCloseModal, { passive: false });
+      closeModalBtn.addEventListener('touchend', handleCloseModal, { passive: false });
+      closeModalBtn.addEventListener('pointerup', handleCloseModal);
+      closeModalBtn.addEventListener('click', handleCloseModal);
+    }
     window.addEventListener('click', (e) => { if (e.target === textModal) closeModal(); });
 
     // Event listener za gumbe unutar modala (koristimo delegaciju na modal)

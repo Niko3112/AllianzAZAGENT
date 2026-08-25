@@ -4,36 +4,40 @@
 ============================= */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ==============================
-  // NAV SCROLL EFFECT
+  // NAV SCROLL EFFECT + PROGRESS
   // ==============================
   const nav = document.getElementById('nav');
   const scrolledThreshold = 60;
+  const scrollProgress = document.getElementById('scroll-progress');
+  let scrollTick = false;
 
-  const handleNavScroll = () => {
-    if (window.scrollY > scrolledThreshold) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
+  const handleScrollEffects = () => {
+    if (nav) {
+      nav.classList.toggle('scrolled', window.scrollY > scrolledThreshold);
+    }
+
+    if (scrollProgress) {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+      scrollProgress.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
     }
   };
-  window.addEventListener('scroll', handleNavScroll, { passive: true });
-  handleNavScroll();
 
-  // ==============================
-  // SCROLL PROGRESS BAR
-  // ==============================
-  const scrollProgress = document.getElementById('scroll-progress');
-  const handleScrollProgress = () => {
-    if (!scrollProgress) return;
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercent = (scrollTop / docHeight) * 100;
-    scrollProgress.style.width = scrollPercent + '%';
+  const scheduleScrollEffects = () => {
+    if (scrollTick) return;
+    scrollTick = true;
+    const frame = window.requestAnimationFrame || ((cb) => setTimeout(cb, 16));
+    frame(() => {
+      handleScrollEffects();
+      scrollTick = false;
+    });
   };
-  window.addEventListener('scroll', handleScrollProgress, { passive: true });
 
+  window.addEventListener('scroll', scheduleScrollEffects, { passive: true });
+  handleScrollEffects();
 
   // ==============================
   // MOBILE HAMBURGER
@@ -73,18 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
     card.style.setProperty('--index', i % 3);
   });
 
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const delay = el.dataset.index ? parseFloat(el.dataset.index) * 90 : 0;
-        setTimeout(() => el.classList.add('visible'), delay);
-        revealObserver.unobserve(el);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const delay = el.dataset.index ? parseFloat(el.dataset.index) * 90 : 0;
+          setTimeout(() => el.classList.add('visible'), delay);
+          revealObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-  reveals.forEach(el => revealObserver.observe(el));
+    reveals.forEach(el => revealObserver.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('visible'));
+  }
 
   // ==============================
   // STATS COUNTER ANIMATION
@@ -92,30 +100,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const stats = document.querySelectorAll('.stat strong');
   let statsAnimated = false;
 
-  const statsObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !statsAnimated) {
-      statsAnimated = true;
-      stats.forEach(stat => {
-        const raw = stat.textContent;
-        const numMatch = raw.match(/[\d.]+/);
-        if (!numMatch) return;
-        const target = parseFloat(numMatch[0]);
-        const suffix = raw.replace(numMatch[0], '');
-        let current = 0;
-        const duration = 3500;
-        const step = target / (duration / 16);
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
+    const statsObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !statsAnimated) {
+        statsAnimated = true;
+        stats.forEach(stat => {
+          const raw = stat.textContent;
+          const numMatch = raw.match(/[\d.]+/);
+          if (!numMatch) return;
+          const target = parseFloat(numMatch[0]);
+          const suffix = raw.replace(numMatch[0], '');
+          let current = 0;
+          const duration = 3500;
+          const step = target / (duration / 16);
 
-        const timer = setInterval(() => {
-          current = Math.min(current + step, target);
-          stat.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(0)) + suffix;
-          if (current >= target) clearInterval(timer);
-        }, 16);
-      });
-    }
-  }, { threshold: 0.8 });
+          const timer = setInterval(() => {
+            current = Math.min(current + step, target);
+            stat.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(0)) + suffix;
+            if (current >= target) clearInterval(timer);
+          }, 16);
+        });
+      }
+    }, { threshold: 0.8 });
 
-  const statsEl = document.querySelector('.hero-stats');
-  if (statsEl) statsObserver.observe(statsEl);
+    const statsEl = document.querySelector('.hero-stats');
+    if (statsEl) statsObserver.observe(statsEl);
+  } else {
+    stats.forEach(stat => {
+      const raw = stat.textContent;
+      const numMatch = raw.match(/[\d.]+/);
+      if (!numMatch) return;
+      stat.textContent = raw;
+    });
+  }
 
   // ==============================
   // TESTIMONIAL TABS

@@ -12,6 +12,7 @@
   <meta name="theme-color" content="#003781" />
   <meta name="keywords"
     content="Allianz, osiguranje, Sesvete, Sesvetski Kraljevec, Danijel Mrkonjić, Marijana Mrkonjić, auto osiguranje, kasko, osiguranje imovine" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
@@ -28,14 +29,13 @@
 
   <!-- Preconnect to external domains to speed up connection -->
   <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
+  <link rel="dns-prefetch" href="//elfsightcdn.com">
 
-  <!-- Preload critical assets like fonts -->
-  <!-- NOTE: Replace with actual font paths if they are different -->
-  <link rel="preload" href="/fonts/AllianzNeoWeb-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/AllianzNeoWeb-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- If your font files are added later, keep the preload below and point to the real URLs.
+       For now, avoid preload warnings from missing files. -->
 
   <!-- Load the main stylesheet immediately so the page does not flash unstyled -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" media="all">
 </head>
 
 <body>
@@ -48,8 +48,8 @@
     <div class="nav-inner">
       <div class="nav-left">
         <div class="nav-logo">
-          <a href="#hero">
-            <img src="slike/logo.webp" alt="Az Agent Logo" class="main-logo-img">
+          <a href="#hero" aria-label="Početna stranica">
+            <img src="slike/logo.webp" alt="Az Agent Logo" class="main-logo-img" decoding="async" fetchpriority="high">
           </a>
         </div>
       </div>
@@ -85,7 +85,7 @@
     </div>
 
     <a href="#card-marijana" class="hero-person hero-person--left reveal">
-      <img src="slike/marijanarb.webp" alt="Marijana Mrkonjić" />
+      <img src="slike/marijanarb.webp" alt="Marijana Mrkonjić" loading="eager" decoding="async" fetchpriority="high" />
       <div class="hero-person-label">
         <strong>Marijana Mrkonjić</strong>
       </div>
@@ -134,7 +134,7 @@
 
 
     <a href="#card-danijel" class="hero-person hero-person--right reveal">
-      <img src="slike/danijelrb.webp" alt="Danijel Mrkonjić" />
+      <img src="slike/danijelrb.webp" alt="Danijel Mrkonjić" loading="eager" decoding="async" fetchpriority="high" />
       <div class="hero-person-label">
         <strong>Danijel Mrkonjić</strong>
       </div>
@@ -847,8 +847,8 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
-  <script src="https://elfsightcdn.com/platform.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="https://elfsightcdn.com/platform.js" defer crossorigin="anonymous"></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
